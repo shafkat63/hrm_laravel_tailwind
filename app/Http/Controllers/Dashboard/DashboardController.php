@@ -4,24 +4,29 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User; // Make sure User model is imported
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
-     public function index()
+    public function index()
     {
-        // Dummy data for now
-        $stats = [
-            'totalUsers' => 12,
-            'totalRoles' => 5,
-            'totalBranches' => 3,
-            'pendingTasks' => 7,
-        ];
+        // Fetch data from database
+        $totalUsers = User::count(); // counts total users
+        $totalRoles = Role::count(); // if you're using Spatie roles
 
-        $recentUsers = [
-            ['id' => 1, 'name' => 'Muhtasir Shafkat', 'email' => 'muhtasir@example.com', 'phone' => '+880123456789', 'role' => 'Admin'],
-            ['id' => 2, 'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '+880987654321', 'role' => 'Employee'],
-            ['id' => 3, 'name' => 'Jane Smith', 'email' => 'jane@example.com', 'phone' => '+880112233445', 'role' => 'HR'],
-            ['id' => 4, 'name' => 'Ali Ahmed', 'email' => 'ali@example.com', 'phone' => '+880556677889', 'role' => 'Manager'],
+
+        // Recent users (latest 5)
+        $recentUsers = User::with('roles') 
+            ->latest()
+            ->take(5)
+            ->get(['id', 'name', 'email', 'phone']); 
+
+        $stats = [
+            'totalUsers' => $totalUsers,
+            'totalRoles' => $totalRoles,
+           
         ];
 
         return view('Dashboard.dashboard', compact('stats', 'recentUsers'));

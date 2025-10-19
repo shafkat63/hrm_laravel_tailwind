@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
 
 class UsersController extends Controller
 {
@@ -30,21 +31,45 @@ class UsersController extends Controller
     }
 
 
-    // public function profile()
-    // {
+    public function registerForm()
+    {
+        return view('auth.register');
+    }
 
-    //     $userEmail = auth()->user()->email;
-    //     return  $employee = Employee::where('primary_email', $userEmail)->first();
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
 
-    //     //   return  $user = Employee::where('id', $id)->first();
+        if ($validator->fails()) {
+            return response()->json([
+                'statusCode' => 204,
+                'errors' => $validator->errors()
+            ]);
+        }
 
-    //     if (!$employee) {
-    //         return response()->json(['message' => 'User not found'], 404);
-    //     }
+        $user = User::create([
+            'uid' => Str::uuid(),
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+            'status' => 1,
+        ]);
 
-    //     return view('profile', compact('employee'));
-    // }
+        // Optional: Assign default role
+        $user->assignRole('Employee');
 
+        return response()->json([
+            'statusCode' => 200,
+            'statusMsg' => 'Registration successful. You can now login.',
+            'route' => route('login')
+        ]);
+    }
     public function profile()
     {
         return view('UserConfig.user.profile');
@@ -53,12 +78,12 @@ class UsersController extends Controller
 
     public function index()
     {
-        $this->checkLogin();
+        // $this->checkLogin();
         return view('UserConfig.user.showUser');
     }
     public function create()
     {
-        $this->checkLogin();
+        // $this->checkLogin();
         return view('UserConfig.user.createUser');
     }
     public function edit($id)

@@ -3,12 +3,12 @@
 @section('title', 'Dashboard')
 
 @section('mainContent')
-<div class="flex flex-col md:flex-row min-h-screen">
+<div class="flex flex-col md:flex-row min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
 
     {{-- Sidebar --}}
     {{-- @include('partials.sidebar') Use your sidebar component --}}
 
-    <div class="flex-1 bg-gray-100 p-6">
+    <div class="flex-1 p-6 backdrop-blur-sm">
         {{-- Top header --}}
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
@@ -19,73 +19,83 @@
             </div>
         </div>
 
-        {{-- Stats cards --}}
+        {{-- Stats cards (Glass effect) --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <div class="bg-white shadow rounded-lg p-6 flex flex-col">
-                <span class="text-gray-500">Total Users</span>
-                <span class="text-2xl font-bold text-gray-800" id="totalUsers">12</span>
+            <div
+                class="bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg rounded-2xl p-6 flex flex-col transition-all hover:scale-[1.02]">
+                <span class="text-gray-700 font-medium">Total Users</span>
+                <span class="text-3xl font-bold text-gray-900 mt-2" id="totalUsers">{{ $stats['totalUsers'] }}</span>
             </div>
-            <div class="bg-white shadow rounded-lg p-6 flex flex-col">
-                <span class="text-gray-500">Active Roles</span>
-                <span class="text-2xl font-bold text-gray-800" id="totalRoles">5</span>
+
+            <div
+                class="bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg rounded-2xl p-6 flex flex-col transition-all hover:scale-[1.02]">
+                <span class="text-gray-700 font-medium">Active Roles</span>
+                <span class="text-3xl font-bold text-gray-900 mt-2" id="totalRoles">{{ $stats['totalRoles'] }}</span>
             </div>
-            <div class="bg-white shadow rounded-lg p-6 flex flex-col">
-                <span class="text-gray-500">Branches</span>
-                <span class="text-2xl font-bold text-gray-800" id="totalBranches">3</span>
+
+            <div
+                class="bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg rounded-2xl p-6 flex flex-col transition-all hover:scale-[1.02]">
+                <span class="text-gray-700 font-medium">Branches</span>
+                <span class="text-3xl font-bold text-gray-900 mt-2" id="totalBranches">3</span>
             </div>
-            <div class="bg-white shadow rounded-lg p-6 flex flex-col">
-                <span class="text-gray-500">Pending Tasks</span>
-                <span class="text-2xl font-bold text-gray-800">7</span>
+
+            <div
+                class="bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg rounded-2xl p-6 flex flex-col transition-all hover:scale-[1.02]">
+                <span class="text-gray-700 font-medium">Pending Tasks</span>
+                <span class="text-3xl font-bold text-gray-900 mt-2">7</span>
             </div>
         </div>
 
         {{-- Recent Users Table --}}
-        <div class="bg-white shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold mb-4">Recent Users</h3>
+        <div
+            class="bg-white/40 backdrop-blur-md border border-white/50 shadow-lg rounded-2xl p-6 transition-all hover:shadow-xl">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Recent Users</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200" id="recentUsersTable">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-white/40">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roles</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">#</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Phone</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Roles</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {{-- Dummy data --}}
+                    <tbody class="divide-y divide-gray-200 bg-white/30">
                         <tr>
-                            <td class="px-6 py-4">1</td>
-                            <td class="px-6 py-4">Muhtasir Shafkat</td>
-                            <td class="px-6 py-4">muhtasir@example.com</td>
-                            <td class="px-6 py-4">+880123456789</td>
+                            <td class="px-6 py-4 text-gray-800">1</td>
+                            <td class="px-6 py-4 font-medium text-gray-900">Muhtasir Shafkat</td>
+                            <td class="px-6 py-4 text-gray-700">muhtasir@example.com</td>
+                            <td class="px-6 py-4 text-gray-700">+880123456789</td>
                             <td class="px-6 py-4"><span
-                                    class="bg-green-100 text-green-800 px-2 py-1 rounded">Admin</span></td>
+                                    class="bg-green-100/70 text-green-800 px-2 py-1 rounded-lg text-sm">Admin</span>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">John Doe</td>
-                            <td class="px-6 py-4">john@example.com</td>
-                            <td class="px-6 py-4">+880987654321</td>
+                            <td class="px-6 py-4 text-gray-800">2</td>
+                            <td class="px-6 py-4 font-medium text-gray-900">John Doe</td>
+                            <td class="px-6 py-4 text-gray-700">john@example.com</td>
+                            <td class="px-6 py-4 text-gray-700">+880987654321</td>
                             <td class="px-6 py-4"><span
-                                    class="bg-blue-100 text-blue-800 px-2 py-1 rounded">Employee</span></td>
+                                    class="bg-blue-100/70 text-blue-800 px-2 py-1 rounded-lg text-sm">Employee</span>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-4">3</td>
-                            <td class="px-6 py-4">Jane Smith</td>
-                            <td class="px-6 py-4">jane@example.com</td>
-                            <td class="px-6 py-4">+880112233445</td>
+                            <td class="px-6 py-4 text-gray-800">3</td>
+                            <td class="px-6 py-4 font-medium text-gray-900">Jane Smith</td>
+                            <td class="px-6 py-4 text-gray-700">jane@example.com</td>
+                            <td class="px-6 py-4 text-gray-700">+880112233445</td>
                             <td class="px-6 py-4"><span
-                                    class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">HR</span></td>
+                                    class="bg-yellow-100/70 text-yellow-800 px-2 py-1 rounded-lg text-sm">HR</span></td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-4">4</td>
-                            <td class="px-6 py-4">Ali Ahmed</td>
-                            <td class="px-6 py-4">ali@example.com</td>
-                            <td class="px-6 py-4">+880556677889</td>
+                            <td class="px-6 py-4 text-gray-800">4</td>
+                            <td class="px-6 py-4 font-medium text-gray-900">Ali Ahmed</td>
+                            <td class="px-6 py-4 text-gray-700">ali@example.com</td>
+                            <td class="px-6 py-4 text-gray-700">+880556677889</td>
                             <td class="px-6 py-4"><span
-                                    class="bg-purple-100 text-purple-800 px-2 py-1 rounded">Manager</span></td>
+                                    class="bg-purple-100/70 text-purple-800 px-2 py-1 rounded-lg text-sm">Manager</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -97,7 +107,6 @@
 
 @section('script')
 <script>
-    // You can later replace this with AJAX calls
-    console.log('Dashboard loaded with dummy data');
+    console.log('Dashboard loaded with glass cards.');
 </script>
 @endsection

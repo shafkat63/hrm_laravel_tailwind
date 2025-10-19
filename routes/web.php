@@ -4,6 +4,7 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\UserConfig\MenuAssignController;
 use App\Http\Controllers\UserConfig\MenuController;
 use App\Http\Controllers\UserConfig\RolesController;
+use App\Http\Controllers\UserConfig\UsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,10 +14,17 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 // routes/web.php
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
+// Route::get('/register', function () {
+//     return view('auth.register');
+// })->name('register');
 
+// Registration page
+Route::get('/register', [UsersController::class, 'registerForm'])->name('register');
+Route::post('/register', [UsersController::class, 'register'])->name('register.post');
+
+Route::get('users-profile', function () {
+    return view('User.profile');
+})->name('users-profile');
 
 Route::get('login', [\App\Http\Controllers\UserConfig\UsersController::class, 'LoginFrom'])->name('login');
 // Route::get('getEmployeeInfo', [\App\Http\Controllers\Setup\EmployeeController::class, 'getEmployeeInfo'])->name('getEmployeeInfo');
@@ -47,10 +55,10 @@ Route::post('GiveMenuToRole', [RolesController::class, 'GiveMenuToRole']);
 
 // User Management Routes
 Route::resource('User', \App\Http\Controllers\UserConfig\UsersController::class);
-Route::get('GetRoles', [\App\Http\Controllers\UserConfig\UsersController::class, 'GetRoles']);
+Route::get('GetRoles', [\App\Http\Controllers\UserConfig\UsersController::class, 'GetRoles'])->name('GetRoles');
 Route::get('GetBranch', [\App\Http\Controllers\UserConfig\UsersController::class, 'GetBranch']);
 Route::post('/get/all/User', [\App\Http\Controllers\UserConfig\UsersController::class, 'getData'])->name('all.User');
-Route::get('/users-profile', [\App\Http\Controllers\UserConfig\UsersController::class, 'profile'])->name('users-profile');
+// Route::get('/users-profile', [\App\Http\Controllers\UserConfig\UsersController::class, 'profile'])->name('users-profile');
 
 
 

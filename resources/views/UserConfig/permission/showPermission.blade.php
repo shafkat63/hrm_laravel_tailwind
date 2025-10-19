@@ -1,175 +1,232 @@
 @extends('layout.appmain')
 @section('title', '- Permissions')
 
-@section('main')
-
-    <main id="main" class="main">
-
-        <div class="pagetitle">
-            <h1>Permissions</h1>
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{url('/')}}">Home</a></li>
-                    <li class="breadcrumb-item">User Config</li>
-                    <li class="breadcrumb-item active">Permissions</li>
+@section('mainContent')
+<main id="main" class="main p-6 min-h-screen bg-gradient-to-b from-blue-100 to-indigo-100">
+    <div class="max-w-7xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Permissions</h1>
+            <nav class="text-sm text-gray-700 mt-1">
+                <ol class="list-reset flex space-x-2">
+                    <li><a href="{{ url('/') }}" class="text-blue-600 hover:underline">Home</a></li>
+                    <li>/</li>
+                    <li>User Config</li>
+                    <li>/</li>
+                    <li class="font-semibold text-gray-800">Permissions</li>
                 </ol>
             </nav>
         </div>
-        <!-- End Page Title -->
 
-        <section class="section dashboard">
-            <div class="row">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-10">
-                                <h5 class="card-title">Permissions</h5>
-                            </div>
-                            <div class="col-md-2 mt-3 ">
-                                <a href="{{route('Permission.create')}}" type="button" class="btn btn-outline-success btn-sm text-right"> Add New <i class="bi bi-plus"></i></a>
-                            </div>
-                        </div>
-                        <form action="#" id="fromData" style="display: none">@csrf</form>
-                        <table class="table table-hover table-responsive table-sm" id="dataTableItem">
-                            <thead>
-                            <tr>
-                                <th>SL</th>
-                                <th>Name</th>
-                                <th>Guard Name</th>
-                                <th>Create At</th>
-                                <th>Update At</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                        </table>
-                        <!-- End Table with hoverable rows -->
-
-                    </div>
-                </div>
+        <!-- Card -->
+        <div class="bg-white/30 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden border border-white/20">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-white/20">
+                <h5 class="text-lg font-semibold text-gray-800">Permission List</h5>
+                <button id="openCreateModal"
+                    class="inline-flex items-center gap-2 bg-green-500/70 hover:bg-green-500/90 text-white text-sm font-medium px-4 py-2 rounded-xl transition backdrop-blur-sm">
+                    Add New <i class="bi bi-plus"></i>
+                </button>
             </div>
-        </section>
 
-    </main>
-    <!-- End #main -->
+            <!-- DataTable -->
+            <div class="overflow-x-auto">
+                <table id="dataTableItem"
+                    class="min-w-full border border-white/20 rounded-xl bg-white/20 backdrop-blur-md text-gray-800">
+                    <thead class="bg-white/30 backdrop-blur-md text-gray-700 uppercase">
+                        <tr>
+                            <th class="px-4 py-2 border-b border-white/20">SL</th>
+                            <th class="px-4 py-2 border-b border-white/20">Name</th>
+                            <th class="px-4 py-2 border-b border-white/20">Guard Name</th>
+                            <th class="px-4 py-2 border-b border-white/20">Created At</th>
+                            <th class="px-4 py-2 border-b border-white/20">Updated At</th>
+                            <th class="px-4 py-2 border-b border-white/20 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="backdrop-blur-sm">
+                        <!-- rows will be injected by DataTables -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="createModal"
+        class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white/30 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-6 border border-white/20">
+            <div class="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Create Permission</h3>
+                <button id="closeModal" class="text-gray-700 hover:text-gray-900">&times;</button>
+            </div>
+
+            <form id="permissionForm">
+                @csrf
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 font-semibold mb-2">Permission Name</label>
+                    <input type="text" id="name" name="name"
+                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800"
+                        placeholder="Enter permission name">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">Type</label>
+                    <select id="type" name="type"
+                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                        <option value="Single">Single Permission</option>
+                        <option value="CRUD">CRUD (view, create, update, delete)</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="cancelModal"
+                        class="bg-gray-200/60 hover:bg-gray-200/80 text-gray-800 px-4 py-2 rounded-xl">Cancel</button>
+                    <button type="submit"
+                        class="bg-blue-600/70 hover:bg-blue-600/90 text-white px-5 py-2 rounded-xl">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white/30 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-6 border border-white/20">
+            <div class="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Edit Permission</h3>
+                <button id="closeEditModal" class="text-gray-700 hover:text-gray-900">&times;</button>
+            </div>
+
+            <form id="editPermissionForm">
+                @csrf
+                <input type="hidden" id="edit_id" name="id">
+                <div class="mb-4">
+                    <label for="edit_name" class="block text-gray-700 font-semibold mb-2">Permission Name</label>
+                    <input type="text" id="edit_name" name="name"
+                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800"
+                        placeholder="Enter permission name">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">Type</label>
+                    <select id="edit_type" name="type"
+                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                        <option value="Single">Single Permission</option>
+                        <option value="CRUD">CRUD (view, create, update, delete)</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="cancelEditModal"
+                        class="bg-gray-200/60 hover:bg-gray-200/80 text-gray-800 px-4 py-2 rounded-xl">Cancel</button>
+                    <button type="submit"
+                        class="bg-blue-600/70 hover:bg-blue-600/90 text-white px-5 py-2 rounded-xl">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
 @endsection
+
 @section('script')
-    <script>
-        var TableData;
-        var url = "{{ route('all.Permission') }}";
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        function LoadDataTable() {
-            TableData = $('#dataTableItem').DataTable({
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                ajax: {
-                    url: url,
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: function(d) {
-                        d.form_data = $("#fromData").serialize(); // Send form data as POST data
-                    }
-                },
-                columns: [
-                    { 
-                    data: 'id', 
-                    name: 'serial_number', 
-                    render: function (data, type, row, meta) {
-                        return meta.row + 1;
-                    },
-                    orderable: false, 
-                    searchable: false
-                     },
-                    { data: 'name' },
-                    { data: 'guard_name' },
-                    { data: 'created_at' },
-                    { data: 'updated_at' },
-                    {
-                        data: null,
-                        orderable: false,
-                        defaultContent: "NO Data",
-                        render: function(data, type, row) {
-                            return `<button type="button" class="btn btn-outline-info btn-sm edit-button" data-id="${row.id}"><i class="bi bi-pencil-fill"></i></button>
-                            <button type="button" class="btn btn-outline-danger btn-sm delete-button" data-id="${row.id}"><i class="bi bi-x-circle-fill"></i></button>`;
-                        }
-                    }
-                ],
-                // Expandable rows
-                rowCallback: function(row, data) {
-                    if (data.parent_id) {
-                        $(row).addClass('child-row');
-                    }
+<script>
+    $(document).ready(function() {
+    let table = $('#dataTableItem').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('all.Permission') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}" }
+        },
+        columns: [
+            { data: 'id', render: (data, type, row, meta) => meta.row + 1 },
+            { data: 'name' },
+            { data: 'guard_name' },
+            { data: 'created_at' },
+            { data: 'updated_at' },
+            {
+                data: 'id',
+                className: "text-center",
+                render: function(id) {
+                    return `
+                        <button class="text-blue-500 hover:text-blue-700 mx-1 edit-btn" data-id="${id}">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700 mx-1 delete-button" data-id="${id}">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    `;
                 }
-            });
+            }
+        ],
+        order: [[0, 'desc']]
+    });
 
-            // Event delegation to handle click events
-            $('#dataTableItem').on('click', '.edit-button', function() {
-                var id = $(this).data('id');
-                showData(id);
-            });
+    // Create Modal
+    $('#openCreateModal').click(()=>$('#createModal').removeClass('hidden'));
+    $('#closeModal, #cancelModal').click(()=>{ $('#createModal').addClass('hidden'); $('#permissionForm')[0].reset(); });
 
-            $('#dataTableItem').on('click', '.delete-button', function() {
-                var id = $(this).data('id');
-                deleteData(id);
-            });
-        }
-
-        $(document).ready(function() {
-            LoadDataTable();
+    $('#permissionForm').submit(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: "{{ route('Permission.store') }}",
+            method: "POST",
+            data: { _token:"{{ csrf_token() }}", name:$('#name').val(), type:$('#type').val() },
+            beforeSend: ()=>Swal.fire({title:'Saving...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()}),
+            success: function(res){
+                Swal.close();
+                if(res.statusCode===200){ Swal.fire('Success', res.statusMsg,'success'); $('#createModal').addClass('hidden'); $('#permissionForm')[0].reset(); table.ajax.reload(null,false); }
+                else Swal.fire('Error', res.statusMsg,'error');
+            },
+            error: ()=>{ Swal.close(); Swal.fire('Error','Something went wrong!','error'); }
         });
+    });
 
-        function showData(id) {
-            var url = "{{ route('Permission.edit', ':id') }}"; // Use named route with placeholder
-            var fullUrl = url.replace(':id', id); // Replace placeholder with actual ID
-            window.location.href = fullUrl; // Redirect to the constructed URL
-        }
+    // Edit Modal
+    $(document).on('click','.edit-btn',function(){
+        let id=$(this).data('id');
+        $.get("/Permission/"+id,function(res){
+            let data=res[0];
+            $('#edit_id').val(data.id); $('#edit_name').val(data.name);
+            if(/view_|create_|update_|delete_/.test(data.name)) $('#edit_type').val('CRUD'); else $('#edit_type').val('Single');
+            $('#editModal').removeClass('hidden');
+        }).fail(()=>Swal.fire('Error','Failed to fetch permission data','error'));
+    });
+    $('#closeEditModal, #cancelEditModal').click(()=>{ $('#editModal').addClass('hidden'); $('#editPermissionForm')[0].reset(); });
 
-        function  deleteData(id) {
-            var csrf_token = $('meta[name="csrf-token"]').attr('content');
-            swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this imaginary file!",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        $.ajax({
-                            url: "{{ url('Permission') }}" + '/' + id,
-                            type: "POST",
-                            data: {'_method': 'DELETE', '_token': csrf_token},
-                            success: function (data) {
-                                console.log(data);
-                                var dataResult = JSON.parse(data);
-                                if (dataResult.statusCode == 200) {
-                                    $('#dataTableItem').DataTable().ajax.reload();
-                                    swal({
-                                        title: "Delete Done",
-                                        text: "Poof! Your data file has been deleted!",
-                                        icon: "success",
-                                        button: "Done"
-                                    });
-                                } else {
-                                    swal("Error occured !!");
-                                }
-                            }, error: function (data) {
-                                console.log(data);
-                                swal({
-                                    title: "Opps...",
-                                    text: "Error occured !",
-                                    icon: "error",
-                                    button: 'Ok ',
-                                });
-                            }
-                        });
-                    } else {
-                        swal("Your imaginary file is safe!");
-                    }
-                });
-        }
+    $('#editPermissionForm').submit(function(e){
+        e.preventDefault();
+        let id=$('#edit_id').val();
+        $.ajax({
+            url:"/Permission", method:"POST",
+            data:{ _token:"{{ csrf_token() }}", id:id, name:$('#edit_name').val(), type:$('#edit_type').val() },
+            beforeSend:()=>Swal.fire({title:'Updating...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()}),
+            success: function(res){
+                Swal.close();
+                if(res.statusCode===200){ Swal.fire('Success', res.statusMsg,'success'); $('#editModal').addClass('hidden'); $('#editPermissionForm')[0].reset(); table.ajax.reload(null,false); }
+                else Swal.fire('Error', res.statusMsg,'error');
+            },
+            error: ()=>{ Swal.close(); Swal.fire('Error','Something went wrong!','error'); }
+        });
+    });
 
-    </script>
+    // Delete
+    $(document).on('click','.delete-button',function(){
+        let id=$(this).data('id');
+        Swal.fire({
+            title:"Are you sure?", text:"This permission will be deleted permanently!", icon:"warning",
+            showCancelButton:true, confirmButtonColor:"#d33", cancelButtonColor:"#3085d6", confirmButtonText:"Yes, delete it!"
+        }).then((result)=>{
+            if(result.isConfirmed){
+                $.ajax({ url:"/Permission/"+id, type:"DELETE", data:{_token:"{{ csrf_token()}}"}, success:()=>{ Swal.fire("Deleted!","The permission has been deleted.","success"); table.ajax.reload(null,false); }, error:()=>Swal.fire("Error!","Failed to delete permission.","error") });
+            }
+        });
+    });
+});
+</script>
 @endsection

@@ -1,178 +1,212 @@
 @extends('layout.appmain')
 @section('title', '- User')
 
-@section('main')
-
-    <main id="main" class="main">
-
-        <div class="pagetitle">
-            <h1>User Info</h1>
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{url('/')}}">Home</a></li>
-                    <li class="breadcrumb-item">User Config</li>
-                    <li class="breadcrumb-item active">User Info</li>
+@section('mainContent')
+<main id="main" class="main p-6 min-h-screen bg-gradient-to-b from-blue-100 to-indigo-100">
+    <div class="max-w-7xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">User Info</h1>
+            <nav class="text-sm text-gray-700 mt-1">
+                <ol class="list-reset flex space-x-2">
+                    <li><a href="{{ url('/') }}" class="text-blue-600 hover:underline">Home</a></li>
+                    <li>/</li>
+                    <li>User Config</li>
+                    <li>/</li>
+                    <li class="font-semibold text-gray-800">User Info</li>
                 </ol>
             </nav>
         </div>
-        <!-- End Page Title -->
 
-        <section class="section dashboard">
-            <div class="row">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-10">
-                                <h5 class="card-title">User Info</h5>
-                            </div>
-                            <div class="col-md-2 mt-3 ">
-                                <a href="{{route('User.create')}}" type="button" class="btn btn-outline-success btn-sm text-right"> Add New <i class="bi bi-plus"></i></a>
-                            </div>
+        <!-- Card -->
+        <div class="bg-white/80 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden border border-white/20">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-white/20">
+                <h5 class="text-lg font-semibold text-gray-800">User Info</h5>
+                <a href="javascript:void(0)" onclick="openModal()"
+                    class="inline-flex items-center gap-2 bg-green-500/80 hover:bg-green-500/90 text-white text-sm font-medium px-4 py-2 rounded-xl transition backdrop-blur-sm">
+                    Add New <i class="bi bi-plus"></i>
+                </a>
+            </div>
+
+            <!-- DataTable -->
+            <div class="overflow-x-auto">
+                <table id="dataTableItem"
+                    class="min-w-full border border-white/20 rounded-xl bg-white/80 backdrop-blur-md text-gray-800">
+                    <thead class="bg-white/80 backdrop-blur-md text-gray-700 uppercase">
+                        <tr>
+                            <th class="px-4 py-2 border-b border-white/20">SL</th>
+                            <th class="px-4 py-2 border-b border-white/20">Name</th>
+                            <th class="px-4 py-2 border-b border-white/20">Phone</th>
+                            <th class="px-4 py-2 border-b border-white/20">Email</th>
+                            <th class="px-4 py-2 border-b border-white/20">Role</th>
+                            <th class="px-4 py-2 border-b border-white/20 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="backdrop-blur-sm">
+                        <!-- rows will be injected by DataTables -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Create User Modal -->
+<div id="createUserModal" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+    <!-- Modal Content -->
+    <div
+        class="relative w-full max-w-lg sm:max-w-md md:max-w-lg lg:max-w-xl bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30 p-6 mx-auto flex flex-col max-h-[90vh]">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4 border-b border-white/30 pb-3 flex-shrink-0">
+            <h3 class="text-xl font-semibold text-gray-800">Add New User</h3>
+            <button class="text-gray-500 hover:text-gray-800" onclick="closeModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- Form Container (scrollable if too tall) -->
+        <div class="overflow-y-auto pr-2 flex-1">
+            <form id="createUserForm" enctype="multipart/form-data">
+                @csrf
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Name</label>
+                        <input type="text" name="name"
+                            class="w-full border border-white/30 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Email</label>
+                        <input type="email" name="email"
+                            class="w-full border border-white/30 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Phone</label>
+                        <input type="text" name="phone"
+                            class="w-full border border-white/30 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-1">Password</label>
+                            <input type="password" name="password"
+                                class="w-full border border-white/30 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
                         </div>
-                        <form action="#" id="fromData" style="display: none">@csrf</form>
-                        <table class="table table-hover table-responsive table-sm" id="dataTableItem">
-                            <thead>
-                            <tr>
-                                <th>SL</th>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Role</th>
-
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                        </table>
-                        <!-- End Table with hoverable rows -->
-
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-1">Confirm Password</label>
+                            <input type="password" name="password_confirmation"
+                                class="w-full border border-white/30 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Role</label>
+                        <select name="roles[]" id="rolesSelect"
+                            class="w-full border border-white/30 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800"
+                            multiple>
+                            <!-- Roles injected via AJAX -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Photo</label>
+                        <input type="file" name="photo" class="w-full">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Status</label>
+                        <select name="status"
+                            class="w-full border border-white/30 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
                     </div>
                 </div>
-            </div>
-        </section>
 
-    </main>
-    <!-- End #main -->
+                <!-- Actions -->
+                <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3 flex-shrink-0">
+                    <button type="button" onclick="closeModal()"
+                        class="px-4 py-2 rounded-xl border border-white/30 text-gray-700 hover:bg-gray-100 transition">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 rounded-xl bg-green-500/80 hover:bg-green-500/90 text-white transition">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 @endsection
+
 @section('script')
-    <script>
-        var TableData;
-        var url = "{{ route('all.User') }}";
+<script>
+    $(document).ready(function() {
+    const table = $('#dataTableItem').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+            url: "{{ route('all.User') }}",
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        },
+        columns: [
+            { data: 'id', render: (data,type,row,meta)=> meta.row+1 },
+            { data: 'name' },
+            { data: 'phone' },
+            { data: 'email' },
+            { data: 'roles_html', orderable:false, searchable:false },
+            { data: null, className:"text-center", orderable:false, searchable:false,
+              render: function(data,type,row){
+                  return `
+                  <button class="text-blue-500 hover:text-blue-700 mx-1 edit-button" data-id="${row.uid}">
+                      <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button class="text-red-500 hover:text-red-700 mx-1 delete-button" data-id="${row.uid}">
+                      <i class="bi bi-trash-fill"></i>
+                  </button>`;
+              }
+            }
+        ],
+        order:[[0,'desc']]
+    });
 
-        function LoadDataTable() {
-            $('#dataTableItem').DataTable({
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                ajax: {
-                    url: url,
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: function(d) {
-                        d.form_data = $("#fromData").serialize(); // Send form data if needed
-                    },
-                    error: function(xhr, error, thrown) {
-                        console.error('AJAX Error:', thrown);
-                    }
-                },
-                columns: [
-                    { 
-                    data: 'id', 
-                    name: 'serial_number', 
-                    render: function (data, type, row, meta) {
-                        return meta.row + 1;
-                    },
-                    orderable: false, 
-                    searchable: false
-                    },
-                    { data: 'name' },
-                    { data: 'phone' },
-                    { data: 'email' },
-                    { data: 'roles_html' },
-                    {
-                        data: null,
-                        orderable: false,
-                        defaultContent: "NO Data",
-                        render: function(data, type, row) {
-                            return `
-                    <button type="button" class="btn btn-outline-info btn-sm edit-button" data-id="${row.uid}"><i class="bi bi-pencil-fill"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-sm delete-button" data-id="${row.uid}"><i class="bi bi-x-circle-fill"></i></button>
-                `;
-                        }
-                    }
-                ],
-                drawCallback: function(settings) {
-                    console.log('DataTables settings:', settings);
-                }
-            });
+    // Modal functions
+    window.openModal = ()=>{ $('#createUserModal').removeClass('hidden'); loadRoles(); };
+    window.closeModal = ()=>{ $('#createUserModal').addClass('hidden'); $('#createUserForm')[0].reset(); };
 
-            // Event delegation for handling click events
-            $('#dataTableItem').on('click', '.edit-button', function() {
-                var id = $(this).data('id');
-                showData(id);
-            });
-
-            $('#dataTableItem').on('click', '.delete-button', function() {
-                var id = $(this).data('id');
-                deleteData(id);
-            });
-        }
-
-        $(document).ready(function() {
-            LoadDataTable();
+    function loadRoles() {
+        $.ajax({
+            url: "{{ route('GetRoles') }}",
+            type: 'GET',
+            success: function(roles){
+                let select=$('#rolesSelect');
+                select.empty();
+                roles.forEach(role=>select.append(`<option value="${role.name}">${role.name}</option>`));
+            },
+            error:()=>Swal.fire('Error','Could not load roles','error')
         });
+    }
 
-        function showData(id) {
-            var url = "{{ route('User.edit', ':id') }}"; // Use named route with placeholder
-            var fullUrl = url.replace(':id', id); // Replace placeholder with actual ID
-            window.location.href = fullUrl; // Redirect to the constructed URL
-        }
-
-        function  deleteData(id) {
-            var csrf_token = $('meta[name="csrf-token"]').attr('content');
-            swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this imaginary file!",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        $.ajax({
-                            url: "{{ url('User') }}" + '/' + id,
-                            type: "POST",
-                            data: {'_method': 'DELETE', '_token': csrf_token},
-                            success: function (data) {
-                                console.log(data);
-                                var dataResult = JSON.parse(data);
-                                if (dataResult.statusCode == 200) {
-                                    $('#dataTableItem').DataTable().ajax.reload();
-                                    swal({
-                                        title: "Delete Done",
-                                        text: "Poof! Your data file has been deleted!",
-                                        icon: "success",
-                                        button: "Done"
-                                    });
-                                } else {
-                                    swal("Error occured !!");
-                                }
-                            }, error: function (data) {
-                                console.log(data);
-                                swal({
-                                    title: "Opps...",
-                                    text: "Error occured !",
-                                    icon: "error",
-                                    button: 'Ok ',
-                                });
-                            }
-                        });
-                    } else {
-                        swal("Your imaginary file is safe!");
-                    }
-                });
-        }
-
-    </script>
+    $('#createUserForm').submit(function(e){
+        e.preventDefault();
+        let formData=new FormData(this);
+        $.ajax({
+            url: "{{ route('User.store') }}",
+            type: 'POST',
+            data: formData,
+            processData:false,
+            contentType:false,
+            beforeSend:()=>Swal.fire({title:'Saving...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()}),
+            success: function(response){
+                Swal.close();
+                let res=typeof response==='string'?JSON.parse(response):response;
+                if(res.statusCode===200){ table.ajax.reload(); closeModal(); Swal.fire('Success',res.statusMsg,'success'); }
+                else Swal.fire('Error',res.statusMsg,'error');
+            },
+            error: ()=>Swal.fire('Error','Could not save data','error')
+        });
+    });
+});
+</script>
 @endsection

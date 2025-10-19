@@ -22,13 +22,13 @@ class PermissionController extends Controller
 
     public function index()
     {
-        $this->checkLogin();
+        // $this->checkLogin();
         return view('UserConfig.permission.showPermission');
     }
 
     public function create()
     {
-        $this->checkLogin();
+        // $this->checkLogin();
         return view('UserConfig.permission.createPermission');
     }
 
@@ -39,53 +39,7 @@ class PermissionController extends Controller
         return view('UserConfig.permission.editPermission', ['rowItem' => $rowItem]);
     }
 
-    // public function store(Request $request){
-    //     try {
-    //         if ($request['id']==""){
-    //             $validator = Validator::make($request->all(), [
-    //                 'name' => 'required',
-    //             ]);
-    //             if ($validator->fails()) {
-    //                 return json_encode(array('statusCode' => 204,'statusMsg' => 'Validation Error.', 'errors' => $validator->errors()));
-    //             }
 
-    //             Permission::create([
-    //                 'name'=>$request->name
-    //             ]);
-
-    //             return json_encode(array(
-    //                 "statusCode" => 200,
-    //                 "statusMsg" => "Data Added Successfully"
-    //             ));
-
-    //         }else{
-    //             $validator = Validator::make($request->all(), [
-    //                 'name' => 'required',
-    //             ]);
-    //             if ($validator->fails()) {
-    //                 return json_encode(array('statusCode' => 204,'statusMsg' => 'Validation Error.', 'errors' => $validator->errors()));
-    //             }
-
-    //             $id = $request['id'];
-
-    //             $permission = Permission::findById($id);
-    //             $permission->update([
-    //                 'name'=>$request->name
-    //             ]);
-    //             return json_encode(array(
-    //                 "statusCode" => 200,
-    //                 "statusMsg" => "Data Update Successfully"
-    //             ));
-    //         }
-
-    //     } catch (\Exception $e) {
-
-    //         return json_encode(array(
-    //             "statusCode" => 400,
-    //             "statusMsg" => $e->getMessage()
-    //         ));;
-    //     }
-    // }
 
 
     public function store(Request $request)
@@ -138,7 +92,8 @@ class PermissionController extends Controller
         }
     }
 
-    public function show($id){
+    public function show($id)
+    {
         try {
             $singleDataShow = DB::table('permissions')->where('id', $id)->get();
             //$singleDataShow = Permission::findById($id)->get();
@@ -152,7 +107,8 @@ class PermissionController extends Controller
         }
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         try {
             $permission = Permission::findById($id);
             $permission->delete();
@@ -168,34 +124,42 @@ class PermissionController extends Controller
         }
     }
 
-    public function getData(Request $request){
-
-        $query = DB::table('permissions')
+    public function getData(Request $request)
+    {
+        $baseQuery = DB::table('permissions')
             ->select('id', 'name', 'guard_name', 'created_at', 'updated_at');
 
-        if (isset($request->search['value'])) {
-            $query->where('name', 'like', '%' . $request->search['value'] . '%');
+        $totalCount = $baseQuery->count();
+
+        if (!empty($request->search['value'])) {
+            $search = $request->search['value'];
+            $baseQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('guard_name', 'like', "%{$search}%");
+            });
         }
 
-        // Ordering
-        if ($request->has('order')) {
-            $query->orderBy($request->columns[$request->order[0]['column']]['data'], $request->order[0]['dir']);
+        $filteredCount = $baseQuery->count();
+
+        if (!empty($request->order)) {
+            $orderColumnIndex = $request->order[0]['column'];
+            $orderDirection = $request->order[0]['dir'];
+            $orderColumn = $request->columns[$orderColumnIndex]['data'];
+            $baseQuery->orderBy($orderColumn, $orderDirection);
+        } else {
+            $baseQuery->orderBy('id', 'desc');
         }
 
-        // Pagination
-        $totalCount = $query->count();
-        $filteredCount = $query->count();
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
 
-        $data = $query->skip($request->input('start', 0))
-            ->take($request->input('length', 10))
-            ->get();
+        $data = $baseQuery->skip($start)->take($length)->get();
 
         return response()->json([
-            'draw' => $request->draw,
+            'draw' => intval($request->draw),
             'recordsTotal' => $totalCount,
             'recordsFiltered' => $filteredCount,
             'data' => $data,
         ]);
-
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
+use Illuminate\Validation\Rule;
 
 class RolesController extends Controller
 {
@@ -33,11 +34,14 @@ class RolesController extends Controller
         return view('UserConfig.role.createRole');
     }
 
+
+
+
     public function edit($id)
     {
         // $this->checkLogin();
         $rowItem = Role::where('id', $id)->first();
-        return view('UserConfig.role.editRole', ['rowItem' => $rowItem]);
+        return response()->json($rowItem);
     }
 
     public function store(Request $request)
@@ -70,7 +74,46 @@ class RolesController extends Controller
             ));;
         }
     }
+    public function update(Request $request, $id)
+    {
+        // 1. Validation (Check uniqueness while ignoring the current ID)
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('roles', 'name')->ignore($id),
+            ],
+        ]);
 
+        try {
+            // 2. Find the Role
+            // Use findOrFail for cleaner error handling if the role doesn't exist
+            $role = Role::findOrFail($id);
+
+            // 3. Update
+            $role->update([
+                'name' => $request->name
+            ]);
+
+            // 4. Success Response
+            return response()->json([
+                "status" => "success",
+                "message" => "Role updated successfully!"
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Role not found."
+            ], 404);
+        } catch (\Exception $e) {
+            // 5. Error Response
+            return response()->json([
+                "status" => "error",
+                "message" => "Error updating role: " . $e->getMessage()
+            ], 500);
+        }
+    }
     public function GivePermissionToRole(Request $request)
     {
         try {
@@ -144,8 +187,8 @@ class RolesController extends Controller
     public function getData(Request $request)
     {
         $query = DB::table('roles')
-            ->select('id', 'name', 'guard_name', 'created_at', 'updated_at')
-            ->where('name', '!=', 'Root');
+            ->select('id', 'name', 'guard_name', 'created_at', 'updated_at');
+            // ->where('name', '!=', 'Root');
 
         // Search
         if (isset($request->search['value']) && $request->search['value'] != '') {
@@ -245,7 +288,7 @@ class RolesController extends Controller
         ];
     }
 
-
+    //Get the menu 
     public function addMenuToRole($id)
     {
         $role = Role::find($id);
@@ -296,7 +339,7 @@ class RolesController extends Controller
             'menu' => $formattedMenus
         ]);
     }
-
+    //Storing Function
     public function GiveMenuToRole(Request $request)
     {
         try {

@@ -2,129 +2,127 @@
 @section('title', '- Permissions')
 
 @section('mainContent')
-<main id="main" class="main p-6 min-h-screen bg-gradient-to-b from-blue-100 to-indigo-100">
-    <div class="max-w-7xl mx-auto">
-        <!-- Page Header -->
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Permissions</h1>
-            <nav class="text-sm text-gray-700 mt-1">
-                <ol class="list-reset flex space-x-2">
-                    <li><a href="{{ url('/') }}" class="text-blue-600 hover:underline">Home</a></li>
-                    <li>/</li>
-                    <li>User Config</li>
-                    <li>/</li>
-                    <li class="font-semibold text-gray-800">Permissions</li>
-                </ol>
-            </nav>
-        </div>
 
-        <!-- Card -->
-        <div class="bg-white/30 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden border border-white/20">
-            <div class="flex justify-between items-center px-6 py-4 border-b border-white/20">
-                <h5 class="text-lg font-semibold text-gray-800">Permission List</h5>
-                <button id="openCreateModal"
-                    class="inline-flex items-center gap-2 bg-green-500/70 hover:bg-green-500/90 text-white text-sm font-medium px-4 py-2 rounded-xl transition backdrop-blur-sm">
-                    Add New <i class="bi bi-plus"></i>
-                </button>
-            </div>
 
-            <!-- DataTable -->
-            <div class="overflow-x-auto">
-                <table id="dataTableItem"
-                    class="min-w-full border border-white/20 rounded-xl bg-white/20 backdrop-blur-md text-gray-800">
-                    <thead class="bg-white/30 backdrop-blur-md text-gray-700 uppercase">
-                        <tr>
-                            <th class="px-4 py-2 border-b border-white/20">SL</th>
-                            <th class="px-4 py-2 border-b border-white/20">Name</th>
-                            <th class="px-4 py-2 border-b border-white/20">Guard Name</th>
-                            <th class="px-4 py-2 border-b border-white/20">Created At</th>
-                            <th class="px-4 py-2 border-b border-white/20">Updated At</th>
-                            <th class="px-4 py-2 border-b border-white/20 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="backdrop-blur-sm">
-                        <!-- rows will be injected by DataTables -->
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
+<div class="container mx-auto mt-10 px-4">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 drop-shadow-sm">Permissions Management</h2>
+        <nav class="text-sm text-gray-700 mt-1">
+            <ol class="list-reset flex space-x-2">
+                <li><a href="{{ url('/') }}" class="text-blue-600 hover:underline">Home</a></li>
+                <li>/</li>
+                <li>User Config</li>
+                <li>/</li>
+                <li class="font-semibold text-gray-800">Permissions</li>
+            </ol>
+        </nav>
     </div>
+    <!-- Card -->
+    <div class="bg-white/30 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden border border-white/20">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-white/20">
+            <h5 class="text-lg font-semibold text-gray-800">Permission List</h5>
+            <button id="openCreateModal"
+                class="inline-flex items-center gap-2 bg-green-500/70 hover:bg-green-500/90 text-white text-sm font-medium px-4 py-2 rounded-xl transition backdrop-blur-sm">
+                Add New <i class="bi bi-plus"></i>
+            </button>
+        </div>
 
-    <!-- Create Modal -->
-    <div id="createModal"
-        class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white/30 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-6 border border-white/20">
-            <div class="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Create Permission</h3>
-                <button id="closeModal" class="text-gray-700 hover:text-gray-900">&times;</button>
+        <!-- DataTable -->
+        <div class="overflow-x-auto">
+            <table id="dataTableItem"
+                class="min-w-full border border-white/20 rounded-xl bg-white/20 backdrop-blur-md text-gray-800">
+                <thead class="bg-white/30 backdrop-blur-md text-gray-700 uppercase">
+                    <tr>
+                        <th class="px-4 py-2 border-b border-white/80">SL</th>
+                        <th class="px-4 py-2 border-b border-white/80">Name</th>
+                        <th class="px-4 py-2 border-b border-white/80">Guard Name</th>
+                        <th class="px-4 py-2 border-b border-white/80">Created At</th>
+                        <th class="px-4 py-2 border-b border-white/80">Updated At</th>
+                        <th class="px-4 py-2 border-b border-white/80 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="backdrop-blur-sm">
+                    <!-- rows will be injected by DataTables -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- Create Modal -->
+<div id="createModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-6 border border-white/20">
+        <div class="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Create Permission</h3>
+            <button id="closeModal" class="text-gray-700 hover:text-gray-900">&times;</button>
+        </div>
+
+        <form id="permissionForm">
+            @csrf
+            <div class="mb-4">
+                <label for="name" class="block text-gray-700 font-semibold mb-2">Permission Name</label>
+                <input type="text" id="name" name="name"
+                    class="w-full border border-white/80 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800"
+                    placeholder="Enter permission name">
             </div>
 
-            <form id="permissionForm">
-                @csrf
-                <div class="mb-4">
-                    <label for="name" class="block text-gray-700 font-semibold mb-2">Permission Name</label>
-                    <input type="text" id="name" name="name"
-                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800"
-                        placeholder="Enter permission name">
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Type</label>
-                    <select id="type" name="type"
-                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
-                        <option value="Single">Single Permission</option>
-                        <option value="CRUD">CRUD (view, create, update, delete)</option>
-                    </select>
-                </div>
-
-                <div class="flex justify-end gap-2">
-                    <button type="button" id="cancelModal"
-                        class="bg-gray-200/60 hover:bg-gray-200/80 text-gray-800 px-4 py-2 rounded-xl">Cancel</button>
-                    <button type="submit"
-                        class="bg-blue-600/70 hover:bg-blue-600/90 text-white px-5 py-2 rounded-xl">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div id="editModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white/30 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-6 border border-white/20">
-            <div class="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Edit Permission</h3>
-                <button id="closeEditModal" class="text-gray-700 hover:text-gray-900">&times;</button>
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-2">Type</label>
+                <select id="type" name="type"
+                    class="w-full border border-white/80 rounded-xl bg-white/80 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                    <option value="Single">Single Permission</option>
+                    <option value="CRUD">CRUD (view, create, update, delete)</option>
+                </select>
             </div>
 
-            <form id="editPermissionForm">
-                @csrf
-                <input type="hidden" id="edit_id" name="id">
-                <div class="mb-4">
-                    <label for="edit_name" class="block text-gray-700 font-semibold mb-2">Permission Name</label>
-                    <input type="text" id="edit_name" name="name"
-                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800"
-                        placeholder="Enter permission name">
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Type</label>
-                    <select id="edit_type" name="type"
-                        class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
-                        <option value="Single">Single Permission</option>
-                        <option value="CRUD">CRUD (view, create, update, delete)</option>
-                    </select>
-                </div>
-
-                <div class="flex justify-end gap-2">
-                    <button type="button" id="cancelEditModal"
-                        class="bg-gray-200/60 hover:bg-gray-200/80 text-gray-800 px-4 py-2 rounded-xl">Cancel</button>
-                    <button type="submit"
-                        class="bg-blue-600/70 hover:bg-blue-600/90 text-white px-5 py-2 rounded-xl">Update</button>
-                </div>
-            </form>
-        </div>
+            <div class="flex justify-end gap-2">
+                <button type="button" id="cancelModal"
+                    class="bg-gray-200/60 hover:bg-gray-200/80 text-gray-800 px-4 py-2 rounded-xl">Cancel</button>
+                <button type="submit"
+                    class="bg-blue-600/70 hover:bg-blue-600/90 text-white px-5 py-2 rounded-xl">Save</button>
+            </div>
+        </form>
     </div>
-</main>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white/30 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-6 border border-white/20">
+        <div class="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Edit Permission</h3>
+            <button id="closeEditModal" class="text-gray-700 hover:text-gray-900">&times;</button>
+        </div>
+
+        <form id="editPermissionForm">
+            @csrf
+            <input type="hidden" id="edit_id" name="id">
+            <div class="mb-4">
+                <label for="edit_name" class="block text-gray-700 font-semibold mb-2">Permission Name</label>
+                <input type="text" id="edit_name" name="name"
+                    class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800"
+                    placeholder="Enter permission name">
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-2">Type</label>
+                <select id="edit_type" name="type"
+                    class="w-full border border-white/30 rounded-xl bg-white/20 backdrop-blur-sm px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800">
+                    <option value="Single">Single Permission</option>
+                    <option value="CRUD">CRUD (view, create, update, delete)</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" id="cancelEditModal"
+                    class="bg-gray-200/60 hover:bg-gray-200/80 text-gray-800 px-4 py-2 rounded-xl">Cancel</button>
+                <button type="submit"
+                    class="bg-blue-600/70 hover:bg-blue-600/90 text-white px-5 py-2 rounded-xl">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 
 @section('script')

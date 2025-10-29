@@ -9,11 +9,9 @@
     <title>HRM @yield("title")</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <!-- Favicon -->
-    <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('assets/img/favicon.png') }}" rel="apple-touch-icon">
+    <link href="{{ asset('assets/icons/shaf.png') }}" rel="icon">
 
     <!-- Tailwind CSS -->
     <script src="{{ asset('js/tailwind.js') }}"></script>
@@ -56,20 +54,20 @@
     @yield('style')
 </head>
 
-<body class="bg-gray-50 min-h-screen flex flex-col" x-data="{ sidebarOpen: false }">
+<body class="bg-gray-50 min-h-screen flex flex-col" x-data="{ sidebarOpen: true }">
 
     <!-- ======= Header ======= -->
     <header class="bg-white shadow-sm fixed top-0 left-0 w-full z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
 
-            <!-- Mobile Sidebar Toggle -->
-            <button class="md:hidden text-gray-700 focus:outline-none" @click="sidebarOpen = true">
+            <!-- Hamburger Toggle (all screens) -->
+            <button class="text-gray-700 focus:outline-none" @click="sidebarOpen = !sidebarOpen">
                 <i class="bi bi-list text-2xl"></i>
             </button>
 
             <!-- Logo -->
             <a href="{{ url('/dashboard') }}" class="flex items-center space-x-2">
-                <img src="{{ asset('assets/img/logo2.png') }}" alt="Logo" class="w-10 h-10 rounded-md">
+                <img src="{{ asset('assets/icons/shaf.png') }}" alt="Logo" class="w-10 h-10 rounded-md">
                 <span class="text-xl font-bold text-blue-600">HRM<span class="text-gray-900">T</span></span>
             </a>
 
@@ -116,31 +114,31 @@
     <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition class="fixed inset-0 bg-black/30 z-40 md:hidden"
         x-cloak></div>
 
-    <aside class="sidebar bg-white w-64 fixed top-16 left-0 h-[calc(100vh-4rem)] overflow-y-auto border-r scrollbar-hide
-                  transform transition-transform duration-300 z-50"
-        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full' md:translate-x-0">
+    <aside class="sidebar bg-white w-64 fixed top-4 left-0 h-[calc(100vh-4rem)] overflow-y-auto border-r scrollbar-hide
+               transform transition-transform duration-300 z-50"
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         @include('layout.menu')
     </aside>
 
     <!-- ======= Main Content ======= -->
-    <main class="flex-1 mt-16 md:ml-64 p-6 transition-all duration-300">
+    <main class="flex-1 mt-16 p-6 transition-all duration-300" :class="sidebarOpen && 'md:ml-64'">
         @yield('mainContent')
     </main>
 
     <!-- ======= Footer ======= -->
     <footer class="bg-white shadow-inner py-4 mt-auto text-center">
         <div class="text-sm text-gray-600">
-            &copy; {{ date('Y') }} <strong>SRL-AMS</strong> — Designed by
-            <a href="https://srl.com.bd/" target="_blank" class="text-blue-600 hover:underline">SRL</a>
+            &copy; {{ date('Y') }} <strong>Shafkat</strong> — Designed by
+            <a href="https://shafkat.vercel.app/" target="_blank" class="text-blue-600 hover:underline">Shafkat63</a>
         </div>
     </footer>
 
     <!-- ======= Scripts ======= -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         // Profile dropdown toggle
         const dropdownBtn = document.getElementById("profileDropdownBtn");
@@ -150,7 +148,7 @@
             dropdownMenu.classList.toggle("hidden");
         });
 
-        window.addEventListener("click", function(e) {
+        window.addEventListener("click", function (e) {
             if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
                 dropdownMenu.classList.add("hidden");
             }
@@ -161,7 +159,7 @@
             $(".border-red-500").removeClass("border-red-500");
             $(".error-text").remove();
 
-            $.each(errors, function(key, messages) {
+            $.each(errors, function (key, messages) {
                 const input = $("#" + key);
                 input.addClass("border-red-500");
                 input.after(`<p class="text-red-500 text-xs mt-1 error-text">${messages[0]}</p>`);

@@ -3,32 +3,20 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User; // Make sure User model is imported
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Fetch data from database
-        $totalUsers = User::count(); // counts total users
-        $totalRoles = Role::count(); // if you're using Spatie roles
 
-
-        // Recent users (latest 5)
-        $recentUsers = User::with('roles') 
-            ->latest()
+        $recentUsers = User::orderBy('created_at', 'desc')
             ->take(5)
-            ->get(['id', 'name', 'email', 'phone']); 
-
+            ->get();
         $stats = [
-            'totalUsers' => $totalUsers,
-            'totalRoles' => $totalRoles,
-           
+            'totalUsers' => User::count(),
+            'totalRoles' => \Spatie\Permission\Models\Role::count(),
         ];
-
-        return view('Dashboard.dashboard', compact('stats', 'recentUsers'));
+        return view('Dashboard.dashboard', compact('recentUsers', 'stats'));
     }
 }

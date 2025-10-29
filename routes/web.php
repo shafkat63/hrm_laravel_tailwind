@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Setup\DepartmentController;
+use App\Http\Controllers\Setup\DesignationController;
 use App\Http\Controllers\UserConfig\MenuAssignController;
 use App\Http\Controllers\UserConfig\MenuController;
 use App\Http\Controllers\UserConfig\RolesController;
@@ -21,10 +23,9 @@ Route::get('/login', function () {
 // Registration page
 Route::get('/register', [UsersController::class, 'registerForm'])->name('register');
 Route::post('/register', [UsersController::class, 'register'])->name('register.post');
+Route::post('/users/{id}', [UsersController::class, 'user-delete'])->name('user-delete');
 
-Route::get('users-profile', function () {
-    return view('User.profile');
-})->name('users-profile');
+
 
 Route::get('login', [\App\Http\Controllers\UserConfig\UsersController::class, 'LoginFrom'])->name('login');
 // Route::get('getEmployeeInfo', [\App\Http\Controllers\Setup\EmployeeController::class, 'getEmployeeInfo'])->name('getEmployeeInfo');
@@ -58,7 +59,7 @@ Route::resource('User', \App\Http\Controllers\UserConfig\UsersController::class)
 Route::get('GetRoles', [\App\Http\Controllers\UserConfig\UsersController::class, 'GetRoles'])->name('GetRoles');
 Route::get('GetBranch', [\App\Http\Controllers\UserConfig\UsersController::class, 'GetBranch']);
 Route::post('/get/all/User', [\App\Http\Controllers\UserConfig\UsersController::class, 'getData'])->name('all.User');
-// Route::get('/users-profile', [\App\Http\Controllers\UserConfig\UsersController::class, 'profile'])->name('users-profile');
+Route::get('/users-profile', [\App\Http\Controllers\UserConfig\UsersController::class, 'profile'])->name('users-profile');
 
 
 
@@ -74,3 +75,10 @@ Route::get('/get/all/menuassign', [MenuAssignController::class, 'getMenuData'])-
 Route::get('/addroletomenu/{menuid}', [MenuAssignController::class, 'addRoleToMenu']);
 Route::get('/get-menus', [MenuAssignController::class, 'getMenus']);
 Route::get('/get-roles', [MenuAssignController::class, 'getRoles']);
+
+
+Route::resource('Department', DepartmentController::class);
+Route::get('/get/all/department', [DepartmentController::class, 'getData'])->name('all.Department');
+
+Route::resource('Designation', DesignationController::class);
+Route::get('/get/all/designation', [DesignationController::class, 'getData'])->name('all.Designation');

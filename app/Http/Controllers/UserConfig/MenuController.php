@@ -81,7 +81,7 @@ class MenuController extends Controller
 
     public function index()
     {
-        return view("admin.menu.index");
+        return view("UserConfig.menu.index");
     }
 
     /**
@@ -237,40 +237,43 @@ class MenuController extends Controller
 
         return DataTables::of($rawData)
             ->addColumn('action', function ($rawData) {
-                $buttton = '
-                <div class="button-list">
-                    <a onclick="showData(' . $rawData->id . ')" role="button" href="#" class="btn btn-success btn-sm"> <i class="bx bx-edit-alt"></i>
-</a>
-                    <a onclick="deleteData(' . $rawData->id . ')" role="button" href="#" class="btn btn-danger btn-sm"><i class="bx bx-trash"></i></a>
+                return '
+                <div class="flex space-x-2 justify-center">
+                    <a onclick="showData(' . $rawData->id . ')" class="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm">
+                        Edit
+                    </a>
+                    <button onclick="deleteData(' . $rawData->id . ')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
+                        Delete
+                    </button>
                 </div>
                 ';
-                return $buttton;
             })
+            ->rawColumns(['action'])
+
             ->rawColumns(['action'])
             ->toJson();
     }
 
 
     public function getParentMenus()
-{
-    try {
-        // Fetch menus where parent_id is '#', meaning no parent
-        $menus = DB::table('menu')
-            ->select('id', 'title')
-            ->where('parent_id', '#')
-            ->get();
+    {
+        try {
+            // Fetch menus where parent_id is '#', meaning no parent
+            $menus = DB::table('menu')
+                ->select('id', 'title')
+                ->where('parent_id', '#')
+                ->get();
 
-        return response()->json([
-            'statusCode' => 200,
-            'data' => $menus,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'statusCode' => 500,
-            'statusMsg' => 'Failed to fetch parent menus',
-            'error' => $e->getMessage(),
-        ]);
+            return response()->json([
+                'statusCode' => 200,
+                'data' => $menus,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'statusCode' => 500,
+                'statusMsg' => 'Failed to fetch parent menus',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
-}
-
 }

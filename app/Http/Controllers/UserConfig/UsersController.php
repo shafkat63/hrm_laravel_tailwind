@@ -72,7 +72,7 @@ class UsersController extends Controller
     }
     public function profile()
     {
-        return view('UserConfig.user.profile');
+        return view('User.profile');
     }
 
 
@@ -89,11 +89,12 @@ class UsersController extends Controller
     public function edit($id)
     {
 
-        $this->checkLogin();
+        $rowItem = User::where('id', $id)->first();
 
-        $rowItem = User::where('uid', $id)->first();
-        return view('UserConfig.user.editUser', ['rowItem' => $rowItem]);
+        return response()->json($rowItem);
     }
+
+
 
     public function changePassword()
     {
@@ -271,10 +272,24 @@ class UsersController extends Controller
                 'users.uid',
                 'users.phone',
                 'users.email',
+                'users.status', // IMPORTANT: Added status for filtering and display
                 'roles.name as role_name'
             )
-            ->where('model_has_roles.model_type', '=', 'App\\Models\\User'); // Ensure the model type matches
+            ->where('model_has_roles.model_type', '=', 'App\\Models\\User');
 
+        // 2. Apply Custom Filters (Role and Status)
+
+        // Filter by Role Name
+        if ($request->filled('role') && $request->role !== '') {
+            $query->where('roles.name', $request->role);
+        }
+
+        // Filter by Status (0 or 1)
+        if ($request->filled('status') && ($request->status === '1' || $request->status === '0')) {
+            $query->where('users.status', (int) $request->status);
+        }
+
+        // 3. Apply DataTables Search Filter
         if ($request->has('search') && isset($request->search['value'])) {
             $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
@@ -284,30 +299,52 @@ class UsersController extends Controller
             });
         }
 
-        // Apply ordering
+        // 4. Get Total Records Count (Records *before* any filtering, correctly counted)
+        $totalCount = DB::table('users')->count();
+
+        // 5. Get Filtered Records Count (Count distinct users after all filters are applied)
+        $filteredCount = (clone $query)->distinct('users.id')->count('users.id');
+
+        // 6. Apply Ordering
         if ($request->has('order')) {
             $orderColumnIndex = $request->order[0]['column'];
             $orderDirection = $request->order[0]['dir'];
-            $orderColumn = $request->columns[$orderColumnIndex]['data'];
+
+            // Map DataTables column index to actual database column name
+            $dtColumns = [
+                0 => 'users.id', // SL
+                1 => 'users.name',
+                2 => 'users.phone',
+                3 => 'users.email',
+                // 4 is roles_html, not a sortable DB column
+            ];
+
+            $orderColumnData = $request->columns[$orderColumnIndex]['data'];
+            $orderColumn = $dtColumns[$orderColumnIndex] ?? 'users.id';
 
             $query->orderBy($orderColumn, $orderDirection);
         }
 
-        // Get total records count
-        $totalCount = $query->count();
-
-        // Apply pagination
-        $filteredCount = $totalCount;
+        // 7. Apply Pagination and Grouping
         $data = $query->skip($request->input('start', 0))
             ->take($request->input('length', 10))
             ->get()
             ->groupBy('id'); // Group by user ID to process roles later
 
-        // Format the data for DataTables
+        // 8. Format the data for DataTables
         $formattedData = $data->map(function ($rolesByUser) {
             $user = $rolesByUser->first();
-            $roleBadges = $rolesByUser->pluck('role_name')->map(function ($role) {
-                return '<span class="badge bg-success">' . $role . '</span>';
+
+            // Generate Tailwind-styled role badges
+            $roleBadges = $rolesByUser->pluck('role_name')->unique()->map(function ($role) {
+                // Assign colors for better visual distinction on the frontend
+                $color = match ($role) {
+                    'admin' => 'bg-red-600',
+                    'manager' => 'bg-blue-600',
+                    'user' => 'bg-green-600',
+                    default => 'bg-gray-600',
+                };
+                return '<span class="inline-block px-2 py-1 text-xs font-semibold text-white ' . $color . ' rounded-full mr-1 mb-1">' . ucfirst($role) . '</span>';
             })->implode('');
 
             return [
@@ -317,9 +354,12 @@ class UsersController extends Controller
                 'phone' => $user->phone,
                 'email' => $user->email,
                 'roles_html' => $roleBadges,
+                // Add status back if needed for other columns/logic
+                'status' => $user->status,
             ];
-        })->values(); // Convert to array
+        })->values();
 
+        // 9. Return DataTables Response
         return response()->json([
             'draw' => intval($request->draw),
             'recordsTotal' => $totalCount,

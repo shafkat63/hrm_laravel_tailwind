@@ -6,7 +6,7 @@
 <div class="flex flex-col md:flex-row min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
 
     {{-- Sidebar --}}
-    {{-- @include('partials.sidebar') Use your sidebar component --}}
+    {{-- @include('partials.sidebar') --}}
 
     <div class="flex-1 p-6 backdrop-blur-sm">
         {{-- Top header --}}
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        {{-- Stats cards (Glass effect) --}}
+        {{-- Stats cards --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <div
                 class="bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg rounded-2xl p-6 flex flex-col transition-all hover:scale-[1.02]">
@@ -62,42 +62,33 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white/30">
+                        @foreach($recentUsers as $index => $user)
                         <tr>
-                            <td class="px-6 py-4 text-gray-800">1</td>
-                            <td class="px-6 py-4 font-medium text-gray-900">Muhtasir Shafkat</td>
-                            <td class="px-6 py-4 text-gray-700">muhtasir@example.com</td>
-                            <td class="px-6 py-4 text-gray-700">+880123456789</td>
-                            <td class="px-6 py-4"><span
-                                    class="bg-green-100/70 text-green-800 px-2 py-1 rounded-lg text-sm">Admin</span>
+                            <td class="px-6 py-4 text-gray-800">{{ $index + 1 }}</td>
+                            <td class="px-6 py-4 font-medium text-gray-900">{{ $user->name }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $user->email }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $user->phone ?? '-' }}</td>
+                            <td class="px-6 py-4">
+                                @foreach($user->getRoleNames() as $roleName)
+                                @php
+                                // Map role name to color badge
+                                $roleColor = match($roleName) {
+                                'Admin' => 'green',
+                                'Employee' => 'blue',
+                                'HR' => 'yellow',
+                                'Manager' => 'purple',
+                                default => 'gray',
+                                };
+                                @endphp
+                                <span
+                                    class="bg-{{ $roleColor }}-100/70 text-{{ $roleColor }}-800 px-2 py-1 rounded-lg text-sm">{{
+                                    $roleName }}</span>
+                                @endforeach
                             </td>
                         </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-gray-800">2</td>
-                            <td class="px-6 py-4 font-medium text-gray-900">John Doe</td>
-                            <td class="px-6 py-4 text-gray-700">john@example.com</td>
-                            <td class="px-6 py-4 text-gray-700">+880987654321</td>
-                            <td class="px-6 py-4"><span
-                                    class="bg-blue-100/70 text-blue-800 px-2 py-1 rounded-lg text-sm">Employee</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-gray-800">3</td>
-                            <td class="px-6 py-4 font-medium text-gray-900">Jane Smith</td>
-                            <td class="px-6 py-4 text-gray-700">jane@example.com</td>
-                            <td class="px-6 py-4 text-gray-700">+880112233445</td>
-                            <td class="px-6 py-4"><span
-                                    class="bg-yellow-100/70 text-yellow-800 px-2 py-1 rounded-lg text-sm">HR</span></td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-gray-800">4</td>
-                            <td class="px-6 py-4 font-medium text-gray-900">Ali Ahmed</td>
-                            <td class="px-6 py-4 text-gray-700">ali@example.com</td>
-                            <td class="px-6 py-4 text-gray-700">+880556677889</td>
-                            <td class="px-6 py-4"><span
-                                    class="bg-purple-100/70 text-purple-800 px-2 py-1 rounded-lg text-sm">Manager</span>
-                            </td>
-                        </tr>
+                        @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -107,6 +98,6 @@
 
 @section('script')
 <script>
-    console.log('Dashboard loaded with glass cards.');
+    console.log('Dashboard loaded with dynamic recent users.');
 </script>
 @endsection
